@@ -1,5 +1,7 @@
 # Serverless Shell
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/UnitedIncome/serverless-shell.svg)](https://greenkeeper.io/)
+
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 [![npm](https://nodei.co/npm/serverless-shell.png?mini=true)](https://www.npmjs.com/package/serverless-shell)
 

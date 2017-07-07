@@ -95,9 +95,9 @@ class ServerlessLocalExec {
    * load the right environment variables and run command
    */
   exec() {
-    this.serverless.cli.log(`Executing ${this.options.exec}...`);
+    this.serverless.cli.log(`Executing ${this.options.command}...`);
     // this would be unsafe, but the user of this already has shell
-    execSync(this.options.exec, {stdio: 'inherit'});
+    execSync(this.options.command, {stdio: 'inherit'});
   };
   /**
    * get the custom.pythonRequirements contents, with defaults set

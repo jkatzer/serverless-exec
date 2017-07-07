@@ -1,40 +1,30 @@
-# Serverless Shell
+# Serverless Exec
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
-[![npm](https://nodei.co/npm/serverless-shell.png?mini=true)](https://www.npmjs.com/package/serverless-shell)
+[![npm](https://nodei.co/npm/serverless-exec.png?mini=true)](https://www.npmjs.com/package/serverless-exec)
 
-A Serverless v1.x plugin to drop to a local shell with your environment
+A Serverless v1.x plugin to drop to execute commands with your environment
 variables from `serverless.yml`.
 
 
 ## Install
 
 ```
-npm install --save serverless-shell
+npm install --save serverless-exec
 ```
 
 Add the plugin to your `serverless.yml`:
 
 ```yaml
 plugins:
-  - serverless-shell
+  - serverless-exec
 ```
 
 ## Usage
-Example in a python project
 ```
-$ serverless shell
-Serverless: Spawning python3.6...
-Python 3.6.1 (default, Mar 22 2017, 06:17:05) 
-[GCC 6.3.0 20170321] on linux
-Type "help", "copyright", "credits" or "license" for more information.
->>> 
-```
-and in a NodeJS project:
-```
-$ serverless shell
-Serverless: Spawning node...
->  
+$ serverless exec "make test"
+Serverless: Executing make test...
+YOUR TESTS PASS AND YOU ARE AWESOME
 ```
 
 ### Per function & stage specific env vars
@@ -44,19 +34,27 @@ various stages, it supports properly building the environment. For example:
 $ serverless -s staging shell -f status
 ```
 
-## Custom shell (babel) support
-If you want to launch a different shell than the runtime's default, you can
-specify that with in the `custom` section of your config. This can be used
-to for thing like using `babel-node` instead of `node` or even dropping to
-`bash` with the right env vars set.
+### This was forked because
+We don't need to sanitize shell inputs in a script utility thats run on
+the shell.
 
-Example:
+Using serverless-shell (a great plugin), in this fashion:
 ```
-  custom:
-    shellBinary: babel-node
+$ serverless shell -S $SHELL
 ```
 
-This feature can also be activated by a CLI switch:
+Executes your shells `.shellrc` or `.shell_profile` which will clobber a
+python virtualenv.
+
+And, passing args was not supported `$ serverless shell -S "make test"`
+because of the NodeJS sanitzation of inputs... which is probably a
+really good idea if you are running NodeJS in production. Personally I
+prefer NoJS because I have class. This plugin has class, so it was very
+pleasant to modify. This functionality seemed different enough from the
+original for a fork. At first I tried:
 ```
-sls shell -S bash
+$ serverless shell -x "make test"
 ```
+Which seemed like a hack.
+
+Thanks to the original author(s).

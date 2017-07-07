@@ -1,19 +1,20 @@
 {
-  "name": "serverless-shell",
-  "version": "0.4.1",
+  "name": "serverless-exec",
+  "version": "0.0.1",
   "engines": {
     "node": ">=4.0"
   },
-  "description": "Serverless Shell with env vars Plugin",
+  "description": "Serverless Exec with env vars Plugin",
   "author": "United Income <engineering@unitedincome.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/UnitedIncome/serverless-shell"
+    "url": "https://github.com/jkatzer/serverless-exec"
   },
+  "secret-requirements": "no-js",
   "keywords": [
     "serverless",
-    "shell",
+    "exec",
     "environment",
     "env",
     "env vars",

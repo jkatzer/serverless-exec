@@ -1,14 +1,14 @@
 /* jshint ignore:start */
 'use strict';
 
-const {spawnSync} = require('child_process');
+const {execSync} = require('child_process');
 const {Promise} = require('bluebird');
 const _ = require('lodash');
 
 /**
- * Plugin for Serverless 1.x that drops you to a shell with your env vars!
+ * Plugin for Serverless 1.x that runs a command with your env vars!
  */
-class ServerlessLocalShell {
+class ServerlessLocalExec {
 
   /**
    * The plugin constructor
@@ -24,20 +24,15 @@ class ServerlessLocalShell {
       this.serverless.service.provider.name);
 
     this.commands = {
-      'shell': {
-         usage: 'Drop to a REPL with your environment variables properly set',
+      'exec': {
+         usage: 'Run a shell command with your lambda environemnt variables',
          lifecycleEvents: [
-           'shell',
+           'exec',
          ],
          options: {
            function: {
-             usage: 'Specify the function whose environment you want (e.g. "--function myFunction")',
+             usage: 'Specify the function whose environment you want (e.g. "--function myFunction")', // eslint-disable-line max-len
              shortcut: 'f',
-             required: false,
-           },
-           shell: {
-             usage: 'Specify a different shell (e.g. "--shell bash")',
-             shortcut: 'S',
              required: false,
            },
          },
@@ -45,9 +40,9 @@ class ServerlessLocalShell {
     };
 
     this.hooks = {
-      'shell:shell': () => Promise.bind(this)
+      'exec:exec': () => Promise.bind(this)
         .then(this.loadEnvVars)
-        .then(this.shell),
+        .then(this.exec),
     };
   }
 
@@ -70,13 +65,12 @@ class ServerlessLocalShell {
     || 1024;
 
     const lambdaDefaultEnvVars = {
-    //PATH: '/usr/local/lib64/node-v4.3.x/bin:/usr/local/bin:/usr/bin/:/bin',
     LANG: 'en_US.UTF-8',
     LD_LIBRARY_PATH: '/usr/local/lib64/node-v4.3.x/lib:/lib64:/usr/lib64:/var/runtime:/var/runtime/lib:/var/task:/var/task/lib', // eslint-disable-line max-len
     LAMBDA_TASK_ROOT: '/var/task',
     LAMBDA_RUNTIME_DIR: '/var/runtime',
-    AWS_REGION: this.options.region || _.get(this.serverless, 'service.provider.region'),
-    AWS_DEFAULT_REGION: this.options.region || _.get(this.serverless, 'service.provider.region'),
+    AWS_REGION: this.options.region || _.get(this.serverless, 'service.provider.region'), // eslint-disable-line max-len
+    AWS_DEFAULT_REGION: this.options.region || _.get(this.serverless, 'service.provider.region'), // eslint-disable-line max-len
     AWS_LAMBDA_LOG_GROUP_NAME: this.provider.naming.getLogGroupName(lambdaName),
     AWS_LAMBDA_LOG_STREAM_NAME:
       '2016/12/02/[$LATEST]f77ff5e4026c45bda9a9ebcec6bc9cad',
@@ -93,26 +87,13 @@ class ServerlessLocalShell {
       process.env, lambdaDefaultEnvVars, providerEnvVars, functionEnvVars);
   }
   /**
-   * load the right environment variables and start shell
+   * load the right environment variables and run command
    */
-  shell() {
-    let shellBinary;
-    if (this.options.shell) {
-     shellBinary = this.options.shell;
-    } else if (_.has(this.serverless, 'service.custom.shellBinary')) {
-      shellBinary = this.serverless.service.custom.shellBinary;
-    } else if (this.serverless.service.provider.runtime.startsWith('nodejs')) {
-      shellBinary = 'node';
-    } else {
-      shellBinary = this.serverless.service.provider.runtime;
-    }
-      this.serverless.cli.log(`Spawning ${shellBinary}...`);
-      spawnSync(shellBinary, [], {
-        env: process.env,
-        stdio: 'inherit',
-      });
+  exec() {
+    this.serverless.cli.log(`Executing ${this.options.exec}...`);
+    // this would be unsafe, but the user of this already has shell
+    execSync(this.options.exec, {stdio: 'inherit'});
   };
-
   /**
    * get the custom.pythonRequirements contents, with defaults set
    * @return {Object}
@@ -126,4 +107,4 @@ class ServerlessLocalShell {
   }
 }
 
-module.exports = ServerlessLocalShell;
+module.exports = ServerlessLocalExec;

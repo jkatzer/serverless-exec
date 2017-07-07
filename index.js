@@ -30,6 +30,11 @@ class ServerlessLocalExec {
            'exec',
          ],
          options: {
+           command: {
+             usage: 'Specify a command to execute (e.g. "--command "make test"")', // eslint-disable-line max-len
+             shortcut: 'c',
+             required: false,
+           },
            function: {
              usage: 'Specify the function whose environment you want (e.g. "--function myFunction")', // eslint-disable-line max-len
              shortcut: 'f',
